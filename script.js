@@ -197,4 +197,27 @@ document.addEventListener('DOMContentLoaded', () => {
   if (currentYearSpan) {
     currentYearSpan.textContent = new Date().getFullYear();
   }
+
+  // 9. Interactive System Architecture Blueprint Tabs
+  const archTabBtns = document.querySelectorAll('.arch-tab-btn');
+  const archTabPanes = document.querySelectorAll('.arch-tab-pane');
+
+  if (archTabBtns.length > 0 && archTabPanes.length > 0) {
+    archTabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetTabId = btn.getAttribute('data-tab');
+        
+        // Remove active class from all buttons and panes
+        archTabBtns.forEach(b => b.classList.remove('active'));
+        archTabPanes.forEach(p => p.classList.remove('active'));
+
+        // Activate clicked button and target pane
+        btn.classList.add('active');
+        const targetPane = document.getElementById(targetTabId);
+        if (targetPane) {
+          targetPane.classList.add('active');
+        }
+      });
+    });
+  }
 });

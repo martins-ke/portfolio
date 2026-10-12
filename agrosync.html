@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgroSync — System Architecture &amp; Engineering Case Study | Brian Omusugu</title>
+  <meta name="description" content="Technical architecture, C4 container modeling, 3NF database design, and PBAC security implementation for AgroSync cloud farm management system.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css?v=3.0.0">
+</head>
+<body id="top">
+
+  <!-- Navigation Header -->
+  <header class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <span class="logo-mark">BJ</span>
+        <div class="brand-text">
+          <span class="brand-name">Brian Omusugu</span>
+          <span class="brand-role">Systems Architect &amp; Backend Engineer</span>
+        </div>
+      </a>
+
+      <nav class="nav-menu" id="nav-menu">
+        <a href="index.html#projects" class="nav-link">&larr; Back to Portfolio</a>
+        <a href="#overview" class="nav-link">Overview</a>
+        <a href="#topology" class="nav-link">C4 Topology</a>
+        <a href="#database" class="nav-link">Database 3NF</a>
+        <a href="#security" class="nav-link">Security &amp; PBAC</a>
+        <a href="#docs" class="nav-link">Specs (PDFs)</a>
+      </nav>
+
+      <div class="nav-actions">
+        <!-- Theme Toggle Button -->
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark and light theme" title="Switch Theme">
+          <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+          <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+
+        <a href="https://github.com/martins-ke/smartfarm-backend" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+          <span>GitHub Repo</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+        </a>
+
+        <!-- Mobile Hamburger Button -->
+        <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle Navigation Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Case Study Hero -->
+    <section class="case-hero" id="overview">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="index.html">Home</a> &rsaquo; <a href="index.html#projects">Projects</a> &rsaquo; <span>AgroSync Technical Architecture</span>
+        </div>
+
+        <div class="case-header-content">
+          <div class="case-badge-pill">Production Case Study &bull; System Architecture</div>
+          <h1 class="case-title">AgroSync: Enterprise Cloud Agricultural Management Platform</h1>
+          <p class="case-lead">
+            A complete architectural breakdown of a production cloud farm management system built for commercial operations — featuring hierarchical PBAC, operational financial shielding, and 3NF relational modeling.
+          </p>
+
+          <div class="case-meta-grid">
+            <div class="meta-item">
+              <span class="meta-label">Client Status</span>
+              <strong class="meta-val">Deployed to Active Production</strong>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Backend Architecture</span>
+              <strong class="meta-val">Java 21 / Spring Boot 4</strong>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Database Engine</span>
+              <strong class="meta-val">MySQL 8.0 &bull; TiDB Serverless</strong>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Frontend Client</span>
+              <strong class="meta-val">React 19 &bull; Vite PWA</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture Section 1: Problem & Executive Summary -->
+    <section class="section case-section">
+      <div class="container">
+        <div class="case-card reveal">
+          <div class="case-section-header">
+            <span class="section-tag">Executive Summary</span>
+            <h2>Business Problem &amp; System Scope</h2>
+          </div>
+          <p>
+            Commercial agricultural enterprises operate under hierarchical delegations: Farm Owners/Admins oversee executive finances, Farm Managers manage allocated project categories, and Field Supervisors coordinate day-to-day laborers and harvests on the ground.
+          </p>
+          <p>
+            <strong>Core Challenges Addressed:</strong>
+          </p>
+          <ul class="case-list">
+            <li><strong>The Financial Privacy Dilemma:</strong> Field supervisors need to record operational transactions (harvest kilograms, seeds used, labor shifts) without seeing sensitive business revenue, product margins, or enterprise balance sheets.</li>
+            <li><strong>Distributed Payment Reconciliation:</strong> Customers and suppliers settle accounts via recurring, partial installments. The system needed a strict FIFO debt allocation algorithm to avoid ledger drift.</li>
+            <li><strong>Distributed Concurrency &amp; ID Collisions:</strong> Preventing primary key collisions across concurrent project creation and transaction deletions without relying on brittle client IDs.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture Section 2: C4 Topology -->
+    <section class="section case-section" id="topology">
+      <div class="container">
+        <div class="case-card reveal">
+          <div class="case-section-header">
+            <span class="section-tag">System Design</span>
+            <h2>C4 Container Architecture &amp; Communication Topology</h2>
+          </div>
+          <p>
+            The platform is structured as a decoupled micro-monolith: a reactive single-page client coupled with a stateless Spring Boot API and managed relational database.
+          </p>
+
+          <!-- Interactive Topology Display -->
+          <div class="arch-topology">
+            <div class="topology-title">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+              <span>Communication Flow &amp; Protocol Topology</span>
+            </div>
+            
+            <div class="topology-grid">
+              <!-- Tier 1: Client -->
+              <div class="topology-node node-client">
+                <div class="node-badge">Client Layer</div>
+                <div class="node-title">React 19 + Vite PWA</div>
+                <ul class="node-specs">
+                  <li>Atomic UI / CSS Modules</li>
+                  <li>45s Reactive Polling</li>
+                  <li>Dynamic Zero-State Dashboard</li>
+                  <li>Role-Based Route Guards</li>
+                </ul>
+                <div class="node-protocol">HTTPS / REST JSON</div>
+              </div>
+
+              <!-- Connector 1 -->
+              <div class="topology-arrow">
+                <span>TLS 1.3</span>
+                <div class="arrow-line"></div>
+              </div>
+
+              <!-- Tier 2: Backend API -->
+              <div class="topology-node node-api">
+                <div class="node-badge">Micro-Monolith Core</div>
+                <div class="node-title">Spring Boot 4 (Java 21/25)</div>
+                <ul class="node-specs">
+                  <li>Spring Security 6.x + JWT</li>
+                  <li>PBAC Hierarchical Interceptors</li>
+                  <li>FIFO Debt Allocation Engine</li>
+                  <li>Algorithmic ID Collision Engine</li>
+                </ul>
+                <div class="node-protocol">JPA / Hibernate ORM</div>
+              </div>
+
+              <!-- Connector 2 -->
+              <div class="topology-arrow">
+                <span>JDBC / Connection Pool</span>
+                <div class="arrow-line"></div>
+              </div>
+
+              <!-- Tier 3: Database & Ext -->
+              <div class="topology-node node-db">
+                <div class="node-badge">Storage &amp; Services</div>
+                <div class="node-title">MySQL 8.0 / TiDB Serverless</div>
+                <ul class="node-specs">
+                  <li>ACID InnoDB Engine</li>
+                  <li>Cascading Referential Integrity</li>
+                  <li>Audit-Logged Financial Records</li>
+                  <li>Resend HTTPS Mail Gateway</li>
+                </ul>
+                <div class="node-protocol">Cloud Encrypted Storage</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture Section 3: Normalized Database Design -->
+    <section class="section case-section" id="database">
+      <div class="container">
+        <div class="case-card reveal">
+          <div class="case-section-header">
+            <span class="section-tag">Database Modeling</span>
+            <h2>Relational Entity-Relationship Diagram (3NF)</h2>
+          </div>
+          <p>
+            The database schema was normalized to <strong>Third Normal Form (3NF)</strong> to guarantee consistency across multi-user environments while enforcing strict referential integrity.
+          </p>
+
+          <div class="schema-code-block">
+            <div class="code-header">
+              <span>AGROSYNC_CORE_SCHEMA.SQL</span>
+              <span class="code-lang">SQL / DDL</span>
+            </div>
+            <pre><code><span class="code-comment">-- User Privilege and Role Partitioning</span>
+<span class="code-keyword">CREATE TABLE</span> users (
+    id <span class="code-type">VARCHAR(36) PRIMARY KEY</span>,
+    username <span class="code-type">VARCHAR(50) UNIQUE NOT NULL</span>,
+    email <span class="code-type">VARCHAR(100) UNIQUE NOT NULL</span>,
+    role <span class="code-type">ENUM('ADMIN', 'MANAGER', 'SUPERVISOR') NOT NULL</span>,
+    privileges <span class="code-type">JSON</span>,
+    max_project_capacity <span class="code-type">INT DEFAULT 5</span>
+);
+
+<span class="code-comment">-- Category & Project Scope Mapping</span>
+<span class="code-keyword">CREATE TABLE</span> projects (
+    id <span class="code-type">VARCHAR(36) PRIMARY KEY</span>,
+    category_id <span class="code-type">VARCHAR(36) REFERENCES</span> categories(id),
+    manager_id <span class="code-type">VARCHAR(36) REFERENCES</span> users(id),
+    supervisor_id <span class="code-type">VARCHAR(36) REFERENCES</span> users(id),
+    status <span class="code-type">ENUM('ACTIVE', 'COMPLETED') NOT NULL</span>
+);
+
+<span class="code-comment">-- Commercial Sales with Stored Computed Balance & FIFO tracking</span>
+<span class="code-keyword">CREATE TABLE</span> sales (
+    id <span class="code-type">VARCHAR(36) PRIMARY KEY</span>,
+    project_id <span class="code-type">VARCHAR(36) REFERENCES</span> projects(id),
+    customer_id <span class="code-type">VARCHAR(36) REFERENCES</span> customers(id),
+    total_amount <span class="code-type">DECIMAL(12,2) NOT NULL</span>,
+    amount_paid <span class="code-type">DECIMAL(12,2) DEFAULT 0.00</span>,
+    balance <span class="code-type">DECIMAL(12,2) GENERATED ALWAYS AS (total_amount - amount_paid) STORED</span>
+);</code></pre>
+          </div>
+
+          <div class="bullet-item" style="margin-top: 1.5rem;">
+            <strong>Transaction Isolation &amp; Concurrency:</strong>
+            All financial operations and inventory deductions run under `@Transactional(isolation = Isolation.READ_COMMITTED)` with optimistic locking (`@Version`) to guard against stale updates.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture Section 4: Security & PBAC -->
+    <section class="section case-section" id="security">
+      <div class="container">
+        <div class="case-card reveal">
+          <div class="case-section-header">
+            <span class="section-tag">Access Control</span>
+            <h2>Hierarchical PBAC &amp; The Financial Privacy Shield</h2>
+          </div>
+          <p>
+            Unlike traditional role systems where permissions are static, AgroSync enforces <strong>Privilege-Based Access Control (PBAC)</strong> combined with project delegation:
+          </p>
+
+          <div class="feature-bullets-grid">
+            <div class="bullet-item">
+              <strong>1. Multi-Tier Delegation Hierarchy:</strong> Farm Admins delegate categories to Managers; Managers assign projects to Field Supervisors. Supervisors only possess visibility into records within their active assigned projects.
+            </div>
+            <div class="bullet-item">
+              <strong>2. Financial Privacy Shield:</strong> Supervisors log harvest amounts, inventory consumption, and farm worker shifts, but all DTO projections and SQL queries systematically redact financial amounts, unit sale prices, and profit margins.
+            </div>
+            <div class="bullet-item">
+              <strong>3. Dynamic Scoped Zero-State UI:</strong> When a user has no active assignments, the UI intelligently guides them with contextual setup cards rather than blank error screens.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture Section 5: Official Documentation PDFs -->
+    <section class="section case-section" id="docs">
+      <div class="container">
+        <div class="case-card reveal">
+          <div class="case-section-header">
+            <span class="section-tag">SDLC Specifications</span>
+            <h2>Official Architectural Documentation (PDFs)</h2>
+          </div>
+          <p>
+            Full publication-grade documentation created during the software engineering and client approval lifecycle:
+          </p>
+
+          <div class="docs-download-cards">
+            <a href="SmartFarm_System_Design_and_Architecture.pdf" target="_blank" class="doc-card">
+              <div class="doc-icon">🏛️</div>
+              <div class="doc-info">
+                <strong>System Design &amp; Architecture (SDD)</strong>
+                <span>C4 container models, component diagrams, relational ERD schemas, and API design specifications.</span>
+              </div>
+              <div class="doc-action">Download SDD PDF &rarr;</div>
+            </a>
+
+            <a href="SmartFarm_SRS_Document.pdf" target="_blank" class="doc-card">
+              <div class="doc-icon">📋</div>
+              <div class="doc-info">
+                <strong>Software Requirements Specification (SRS)</strong>
+                <span>IEEE 830 compliant SRS with functional/non-functional requirements, PBAC matrices, and state tables.</span>
+              </div>
+              <div class="doc-action">Download SRS PDF &rarr;</div>
+            </a>
+
+            <a href="SmartFarm_Complete_System_Flowcharts.pdf" target="_blank" class="doc-card">
+              <div class="doc-icon">📊</div>
+              <div class="doc-info">
+                <strong>12 Complete System Workflow Flowcharts</strong>
+                <span>Process logic covering authentication, project lifecycles, FIFO payments, stock usage, and audit checks.</span>
+              </div>
+              <div class="doc-action">Download Flowcharts PDF &rarr;</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-bottom">
+        <p>&copy; <span id="current-year"></span> Brian Omusugu. Case Study Architecture.</p>
+        <a href="#top" class="back-to-top" title="Back to top" aria-label="Back to top">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js?v=3.0.0"></script>
+</body>
+</html>

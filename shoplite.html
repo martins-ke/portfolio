@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopLite POS — Technical Breakdown | Brian Omusugu</title>
+  <meta name="description" content="Technical details, ACID inventory transactions, and receipt calculation architecture for ShopLite POS.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css?v=3.0.0">
+</head>
+<body id="top">
+
+  <!-- Navigation Header -->
+  <header class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <span class="logo-mark">BJ</span>
+        <div class="brand-text">
+          <span class="brand-name">Brian Omusugu</span>
+          <span class="brand-role">Systems Architect &amp; Backend Engineer</span>
+        </div>
+      </a>
+
+      <nav class="nav-menu" id="nav-menu">
+        <a href="index.html#projects" class="nav-link">&larr; Back to Portfolio</a>
+        <a href="#overview" class="nav-link">Overview</a>
+        <a href="#architecture" class="nav-link">Architecture</a>
+        <a href="#features" class="nav-link">Features</a>
+      </nav>
+
+      <div class="nav-actions">
+        <!-- Theme Toggle Button -->
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark and light theme" title="Switch Theme">
+          <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+          <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+
+        <a href="https://github.com/martins-ke" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+          <span>GitHub</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+        </a>
+
+        <!-- Mobile Hamburger Button -->
+        <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle Navigation Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Case Study Hero -->
+    <section class="case-hero" id="overview">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="index.html">Home</a> &rsaquo; <a href="index.html#projects">Projects</a> &rsaquo; <span>ShopLite POS Project Breakdown</span>
+        </div>
+
+        <div class="case-header-content">
+          <div class="case-badge-pill">Enterprise POS Engine &bull; Practice Project</div>
+          <h1 class="case-title">ShopLite POS &amp; Inventory Management System</h1>
+          <p class="case-lead">
+            A high-concurrency retail point-of-sale and inventory backend built in Java and Spring Boot, focusing on transactional integrity, atomic inventory decrements, and sales audit logging.
+          </p>
+
+          <div class="case-meta-grid">
+            <div class="meta-item">
+              <span class="meta-label">Project Type</span>
+              <strong class="meta-val">Backend POS Engine</strong>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Core Technology</span>
+              <strong class="meta-val">Java &bull; Spring Boot</strong>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Database</span>
+              <strong class="meta-val">Relational MySQL Schema</strong>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Key Highlight</span>
+              <strong class="meta-val">ACID Atomic Checkouts</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture Breakdown -->
+    <section class="section case-section" id="architecture">
+      <div class="container">
+        <div class="case-card reveal">
+          <div class="case-section-header">
+            <span class="section-tag">Engineering Focus</span>
+            <h2>Architectural Design &amp; ACID Invariants</h2>
+          </div>
+          <p>
+            When processing high-velocity retail checkouts, race conditions can easily cause negative inventory balances or inconsistent ledger tallies. ShopLite was architected to handle these challenges cleanly:
+          </p>
+
+          <div class="feature-bullets-grid">
+            <div class="bullet-item">
+              <strong>Atomic Inventory Decrements:</strong> Every sales transaction verifies item stock level in real-time. If stock is insufficient, the entire checkout rolls back with zero partial data writes.
+            </div>
+            <div class="bullet-item">
+              <strong>Deterministic Receipt &amp; Tax Calculation:</strong> Tax levies and discount deductions are calculated with `BigDecimal` arithmetic to prevent floating-point rounding errors.
+            </div>
+            <div class="bullet-item">
+              <strong>Auditable Ledger Schema:</strong> Completed sales generate immutable audit logs that link each transaction line item to cashier sessions and warehouse stock states.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Features -->
+    <section class="section case-section" id="features">
+      <div class="container">
+        <div class="case-card reveal">
+          <div class="case-section-header">
+            <span class="section-tag">Capabilities</span>
+            <h2>Core System Capabilities</h2>
+          </div>
+          
+          <ul class="case-list">
+            <li><strong>Barcode &amp; SKU Lookup:</strong> Fast indexed searching of product inventory.</li>
+            <li><strong>Multi-tender Payment Support:</strong> Cash, card, and split-tender payment handling.</li>
+            <li><strong>End-of-Day Cashier Reconciliation:</strong> Shift closing and cash drawer variance reporting.</li>
+            <li><strong>Low-Stock Alerts:</strong> Automated threshold monitoring to notify store managers before stock runs out.</li>
+          </ul>
+
+          <div style="margin-top: 2rem;">
+            <a href="https://github.com/martins-ke" target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+              <span>View Source on GitHub</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-bottom">
+        <p>&copy; <span id="current-year"></span> Brian Omusugu. ShopLite POS Breakdown.</p>
+        <a href="#top" class="back-to-top" title="Back to top" aria-label="Back to top">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js?v=3.0.0"></script>
+</body>
+</html>
