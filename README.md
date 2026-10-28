@@ -1,4 +1,4 @@
-👋 Hi, I'm Brian Omusugu
+👋 Hi, I'm Brian Martin's
 
 Backend-focused developer with strong foundations in Core Java, OOP, and relational databases.  
 I build secure, practical systems that solve real-world business problems.
@@ -32,4 +32,4 @@ Includes inventory management, secure login, stock tracking, and sales processin
 
  📫 Contact
 
-Open to internships, junior backend roles, and collaboration opportunities.
+Open to internships, junior backend roles, and collaboration opportunities. 
