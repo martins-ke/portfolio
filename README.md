@@ -13,14 +13,16 @@ I build secure, practical systems that solve real-world business problems.
 
  🛠 Tech Stack
 
-Languages: Java, SQL, JavaScript  
+Front-end: HTML5%, CSS, JAVASCRIPT
+Back-end: JAVA
+Framworks: REACT(front-end) & SPRINGBOOT(back-end) 
 Database: MySQL  
 Backend Concepts: OOP, JDBC, CRUD Operations, Constraints, Authentication  
-Tools: Git, NetBeans  
+Tools: Git, STS
 
 📌 Featured Project
 
-🛒 ShopLite POS System
+🛒 Leo POS System
 A role-based Point of Sale system built with Core Java and MySQL.  
 Includes inventory management, secure login, stock tracking, and sales processing.
 
@@ -28,8 +30,9 @@ Includes inventory management, secure login, stock tracking, and sales processin
 
 - Advancing backend architecture skills  
 - Expanding into web-based frontend integration  
-- Building production-ready full-stack systems  
+- Building production-ready full-stack systems 
+- AI intergration into systems for efficiency 
 
  📫 Contact
 
-Open to internships, junior backend roles, and collaboration opportunities. 
+Open to internships, Back-end roles, Front-end roles, and collaboration opportunities. 
